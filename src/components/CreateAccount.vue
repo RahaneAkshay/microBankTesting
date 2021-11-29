@@ -10,40 +10,24 @@
         <form name="form">
           <div>
             <label>Fullname:</label>
-            <input
-              v-model="userFormGroup.props.fullName"
-              type="text"
-              name="name"
-            />
+            <input v-model="user.fullName" type="text" name="name" />
           </div>
           <div>
             <label>Date of incorparation:</label>
-            <input
-              v-model="userFormGroup.props.dateOfIncorporation"
-              type="date"
-              name="date"
-            />
+            <input v-model="user.dateOfIncorporation" type="date" name="date" />
           </div>
           <div>
             <label>Email:</label>
-            <input
-              v-model="userFormGroup.props.email"
-              type="text"
-              name="email"
-            />
+            <input v-model="user.email" type="text" name="email" />
           </div>
           <div>
             <label>Password:</label>
-            <input
-              v-model="userFormGroup.props.password"
-              type="password"
-              name="password"
-            />
+            <input v-model="user.password" type="password" name="password" />
           </div>
           <div>
             <label>Confirm Password:</label>
             <input
-              v-model="userFormGroup.props.confirmPassword"
+              v-model="user.confirmPassword"
               type="password"
               name="confirmpassword"
             />
@@ -52,12 +36,11 @@
           <div>
             <button
               type="button"
-              class="btn btn-outline-warning"
               @click="getFormData()"
-              :disabled="!userFormGroup.valid"
+              :disabled="false"
               id="btn"
             >
-              <router-link to="/UserDashboard" >Create Account</router-link>
+              create account
             </button>
           </div>
         </form>
@@ -65,14 +48,51 @@
     </div>
   </div>
 </template>
-
 <script lang="ts">
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, Vue } from "vue-property-decorator";
-
+import { namespace } from "vuex-class";
+import { UserModel } from "../model/user.model";
+const User = namespace("User");
 @Component({})
 export default class CreateAccount extends Vue {
+  @User.Mutation
+  public setUser!: (newUser: UserModel) => void;
+  user = {
+    fullName: "",
+    dateOfIncorporation: new Date(),
+    email: "",
+    password: "",
+    confirmPassword: "",
+  };
+  isValid = false;
+  private errors = "";
+  getFormData() {
+    // eslint-disable-next-line no-constant-condition
+    if (this.checkFormStatus()) {
+      this.$router.push("/UserDashboard");
+      this.setUser(this.user);
+    } else {
+      alert(this.errors);
+      this.errors = "";
+    }
+  }
+  checkFormStatus(): boolean {
+    if (this.user.fullName === "") {
+      this.errors += "Enter the user name \n";
+    }
+    if (this.user.email === "") {
+      this.errors += "Enter the email \n";
+    }
+    if (this.user.password === "") {
+      this.errors += "Enter the password \n";
+    }
+    if (this.user.confirmPassword === "") {
+      this.errors += "Enter the confirm password \n";
+    }
+    return this.errors.length > 1 ? false : true;
+  }
 }
 </script>
 
